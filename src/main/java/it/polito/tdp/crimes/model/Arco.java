@@ -25,7 +25,7 @@ public class Arco implements Comparable<Arco>{
 
 	@Override
 	public String toString() {
-		return  s1 + " " + s2 + " " + peso;
+		return  s1 + " ----- " + s2 + " " + peso;
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class FXMLController {
     private Button btnAnalisi;
 
     @FXML
-    private ComboBox<?> boxArco;
+    private ComboBox<Arco> boxArco;
 
     @FXML
     private Button btnPercorso;
@@ -44,6 +44,19 @@ public class FXMLController {
 
     @FXML
     void doCalcolaPercorso(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+    	
+    	Arco a = this.boxArco.getValue();
+    	
+    	
+    	List<String> cammino = model.cammino(a.getS1(), a.getS2());
+    	
+    	this.txtResult.appendText("Cammino trovato tra: "+a.getS1()+" e "+a.getS2()+"\nPeso : "+model.pesoMin()+"\n");
+    	
+    	for(String s : cammino) {
+    		this.txtResult.appendText(s+"\n");
+    	}
 
     }
 
@@ -65,6 +78,9 @@ public class FXMLController {
     		txtResult.appendText(a.toString()+"\n");
     	}
     	
+    	this.boxArco.getItems().clear();
+    	this.boxArco.getItems().addAll(model.archiFiltro());
+    	this.boxArco.setValue(model.archiFiltro().get(0));
     	
     	
 

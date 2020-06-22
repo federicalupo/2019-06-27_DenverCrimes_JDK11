@@ -16,6 +16,8 @@ public class Model {
 	private EventsDAO dao;
 	private Graph<String, DefaultWeightedEdge> grafo;
 	private List<Arco> archi;
+	private List<String> camminoBest;
+	private Integer pesoMin;
 	
 	public Model() {
 		dao = new EventsDAO();
@@ -73,5 +75,81 @@ public class Model {
 		return listaFiltrata;
 		
 		
+	}
+	/**
+	 * 
+	 * parto da sorgente, 
+	 * inserisco in parziale
+	 * 
+	 * 
+	 * mi faccio dare i vicini
+	 * per ogni vicino, se non è in parziale, lo inserisco
+	 * continuo 
+	 * 
+	 * backtracking
+	 * 
+	 * quando l'ultimo inserito = s2
+	 * se il numero di vertici > numero di vertici fino ad allora inseriti
+	 * riaggiornare
+	 * 
+	 * variabile nVertici = parziale.size()
+	 * 
+	 * se il numero di vertici = numero di vertici fino ad allora inseriti
+	 * controllo se il peso è <
+	 * variabile pesoMin = MAx_value
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @param s1
+	 * @param s2
+	 */
+	public List<String> cammino(String s1, String s2) {
+		this.camminoBest = new ArrayList<>();
+		this.pesoMin = Integer.MAX_VALUE;
+		
+		List<String> parziale = new ArrayList<>();
+		parziale.add(s1);
+		
+		Integer peso = 0;
+		ricorsiva(s1, s2, peso,  parziale);
+		
+		return this.camminoBest;
+		
+	}
+	
+	private void ricorsiva(String s1, String s2, Integer peso,  List<String> parziale) {
+		
+		if(s1.equals(s2)) {
+			if(parziale.size() > this.camminoBest.size()) {
+				this.camminoBest = new ArrayList<>(parziale);
+				this.pesoMin = peso;
+				
+				return;
+			}
+			if(parziale.size() == this.camminoBest.size()) {
+				if(peso < pesoMin) {
+					this.camminoBest = new ArrayList<>(parziale);
+					pesoMin =peso;
+				}
+				
+				return;
+			}
+		}
+		
+		
+		for(String s : Graphs.neighborListOf(this.grafo, s1)) {
+			if(!parziale.contains(s)) {
+				parziale.add(s);
+				peso+=(int)this.grafo.getEdgeWeight(this.grafo.getEdge(s1, s));
+				ricorsiva(s, s2, peso, parziale);
+				parziale.remove(s);
+			}
+		}
+		
+	}
+	
+	public Integer pesoMin() {
+		return this.pesoMin;
 	}
 }
