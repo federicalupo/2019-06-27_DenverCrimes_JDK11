@@ -1,8 +1,10 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.crimes.model.Arco;
 import it.polito.tdp.crimes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,10 +25,10 @@ public class FXMLController {
     private URL location;
 
     @FXML
-    private ComboBox<?> boxCategoria;
+    private ComboBox<String> boxCategoria;
 
     @FXML
-    private ComboBox<?> boxAnno;
+    private ComboBox<Integer> boxAnno;
 
     @FXML
     private Button btnAnalisi;
@@ -47,6 +49,24 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+    	
+    	String categoria= this.boxCategoria.getValue();
+    	Integer anno = this.boxAnno.getValue();
+    	
+    	model.creaGrafo(categoria, anno);
+    	this.txtResult.appendText("Grafo creato!\n");
+    	this.txtResult.appendText(String.format("#vertici: %d\n#archi: %d \n", model.nVertici(), model.nArchi()));
+    	
+    	txtResult.appendText("\nElenco archi con peso pari al peso massimo:\n");
+    	
+    	for(Arco a : model.archiFiltro()) {
+    		txtResult.appendText(a.toString()+"\n");
+    	}
+    	
+    	
+    	
 
     }
 
@@ -63,5 +83,10 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		this.boxCategoria.getItems().addAll(model.getCategorie());
+		this.boxCategoria.setValue(model.getCategorie().get(0));
+		
+		this.boxAnno.getItems().addAll(model.listaAnni());
+		this.boxAnno.setValue(model.listaAnni().get(0));
 	}
 }

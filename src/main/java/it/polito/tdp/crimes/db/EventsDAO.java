@@ -54,5 +54,112 @@ public class EventsDAO {
 			return null ;
 		}
 	}
+	
+	public List<String> listaCategorie(){
+		String sql= "select distinct offense_category_id " + 
+				"from events " + 
+				"order by offense_category_id " ;
+		
+		List<String> categorie = new ArrayList<>();
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				categorie.add(res.getString("offense_category_id"));
+			}
+			
+			conn.close();
+			return categorie ;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public List<Integer> listaAnni(){
+		String sql = "select distinct year(reported_date) " + 
+				"from events " + 
+				"order by year(reported_date)";
+		List<Integer> anni = new ArrayList<>();
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				anni.add(res.getInt("year(reported_date)"));
+			}
+			
+			conn.close();
+			return anni ;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public List<String> vertici(String categoria, Integer anno){
+		String sql ="select distinct offense_type_id " + 
+				"from events " + 
+				"where offense_category_id = ? " + 
+				"and year(reported_date)=? " + 
+				"order by offense_type_id";
+		
+		List<String> vertici = new ArrayList<>();
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setString(1, categoria);
+			st.setInt(2, anno);
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				vertici.add(res.getString("offense_type_id"));
+			}
+			
+			conn.close();
+			return vertici ;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+		
+	}
+
+	public Integer getPeso(String s1, String s2) {
+		String sql = "select  count(distinct e1.district_id) as c " + 
+				"from events as e1, events as e2 " + 
+				"where e1.`offense_type_id`=? " + 
+				"and e2.`offense_type_id` =? " + 
+				"and e1.`district_id` = e2.`district_id` " ;
+		Integer peso = null;
+		
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setString(1, s1);
+			st.setString(2, s2);
+			
+			ResultSet res = st.executeQuery() ;
+			
+			
+			if(res.next()) {
+				peso = res.getInt("c");	
+			}
+			conn.close();
+			return peso;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+		
+	}
 
 }
